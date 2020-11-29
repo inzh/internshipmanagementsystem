@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>注 册</title>
+	<link rel="stylesheet" href="component/pear/css/pear.css" />
+	<link rel="stylesheet" href="admin/css/other/login.css" />
+</head>
+<!-- 代 码 结 构 -->
+<body background="admin/images/background2.svg" style="background-size: cover;">
+<form class="layui-form" action="javascript:void(0);">
+	<div class="layui-form-item">
+		<img class="logo" src="admin/images/logo.png" />
+		<div class="title">I-M-S Register</div>
+	</div>
+	<div class="layui-form-item">
+		<input id="username" name="username" placeholder="用户名: " type="text" hover class="layui-input" required lay-verify="username"/>
+	</div>
+	<div class="layui-form-item">
+		<input id="password" name="password" placeholder="密码: " type="password"  hover class="layui-input" required lay-verify="password"/>
+	</div>
+	<div class="layui-form-item">
+		<input id="repassword" name="repassword" placeholder="确认密码: " type="password"  hover class="layui-input" required lay-verify="repassword"/>
+	</div>
+	<div class="layui-form-item">
+		<input id="nickname" name="nickname" placeholder="昵称: " type="text" hover class="layui-input" required lay-verify="username"/>
+	</div>
+	<div class="layui-form-item">
+		<input id="phone" name="phone" placeholder="手机号码: " type="text" hover class="layui-input" required lay-verify="phone"/>
+	</div>
+	<div class="layui-form-item">
+		<input id="email" name="email" placeholder="邮箱: " type="text" hover class="layui-input" required lay-verify="email"/>
+	</div>
+
+	<div class="layui-form-item">
+		<input placeholder="邮箱验证码 : " name="captcha" id="captcha" hover class="code layui-input layui-input-inline"  required lay-verify="captcha" />
+		<button type="button" id="sendemail" class="layui-btn layui-btn-normal sendemail" style="float: right;width: 120px !important;background-color:#fdd663 !important;">发送验证码</button>
+	</div>
+	<div class="layui-form-item">
+		<button class="pear-btn pear-btn-success login" lay-submit lay-filter="formRegister">
+			注 册
+		</button>
+	</div>
+	<div class="layui-form-item">
+		<a href="/login.html" style="color: #029789!important">已有账号？点击登录</a>
+		<a href="/login.html" style="float: right;">忘记密码</a>
+	</div>
+</form>
+<script src="component/layui/layui.js"></script>
+<script src="component/pear/pear.js"></script>
+<script>
+	layui.use(['form', 'element','jquery','popup','layer'], function() {
+		var form = layui.form;
+		var element = layui.element;
+		var $ = layui.jquery;
+		var popup = layui.popup;
+		var InterValObj; //timer变量，控制时间
+		var count = 120; //间隔函数，1秒执行
+		var curCount;//当前剩余秒数
+		// $("body").on("click",".login",function(obj){
+		// 	location.href="/api/admin"
+		// })
+
+		form.verify({
+			username: function(value) {
+				if (value.length <= 0 ) {
+					return '用户名不能为空';
+				}
+			},
+			password: function (value) {
+				if (value.length <= 0) {
+					return '密码不能为空';
+				}
+			},
+			repassword: function (value) {
+				var pass = document.getElementById("password").value;
+				if(value != pass) {
+					return '两次密码输入不一致，请重新输入！';
+				}
+			},
+			captcha: function (value) {
+				if (value.length <= 0) {
+					return '验证码不能为空';
+				}
+				if (value.length !== 4) {
+					return '请输入正确格式的验证码';
+				}
+			}
+		})
+
+		$(".sendemail").click(function () {
+			var reg = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+			var email = $("#email").val();
+			var flag = 0;
+			if(email=='' || !reg.test(email)){
+				popup.failure("请输入正确的邮箱格式！")
+				return false;
+			} else {
+				$.ajax({
+					//url路径
+					url: '/register/sendemail',
+					//data请求数据
+					data: {"email": email},
+					//dataType json
+					type: "post",
+					//回调函数
+					success: function (data) {
+						//回调函数 data 返回流
+						if (data == "failure") {
+							popup.failure("发送失败");
+						}
+						else if (data == "false"){
+							popup.failure("目标邮箱不存在，请检查你的邮箱是否正确");
+						} else if( data == 'success') {
+							popup.success("邮件发送成功！请注意查收");
+							flag = 1;
+						}
+						//  else{
+
+						// }
+					}
+				});
+			}
+			curCount = count;
+			document.getElementById("sendemail").setAttribute("disabled","true" );//设置按钮为禁用状态
+			$('#sendemail').addClass('layui-btn-disabled');
+			$('#sendemail').text(curCount + "秒后重获");
+			InterValObj = window.setInterval(SetRemainTime, 1000); // 启动计时器timer处理函数，1秒执行一次
+		})
+
+		function SetRemainTime(){
+			if(curCount == 0){
+				$('#sendemail').removeClass('layui-btn-disabled');
+				$('#sendemail').text("重获验证码");
+				window.clearInterval(InterValObj);// 停止计时器
+				document.getElementById("sendemail").removeAttribute("disabled");//移除禁用状态改为可用
+			} else{
+				curCount--;
+				$('#sendemail').text(curCount + "秒后重获");
+			}
+		}
+
+		form.on('submit(formRegister)', function() {
+			$.ajax({
+				url:'/register',
+				type:'post',
+				dataType:'text',
+				data:{
+					username:$('#username').val(),
+					password:$('#password').val(),
+					captcha:$('#captcha').val(),
+					rememberme:$('#rememberme').val()
+				},
+				success:function(result){
+					var restjson = JSON.parse(result)
+					if (restjson.success) {
+						// layui.data("token", {
+						// 	key: "Authorization",
+						// 	value: "Bearer "+ restjson.jwt
+						// });
+						layer.msg(restjson.msg,{icon:1,time:1000},function () {
+							location.href = "/";
+						});
+					}else {
+						layer.msg(restjson.msg,{icon:2,time:1000},function () {
+							$("#captchaImage").attr("src","/captcha" + "?" + Math.random());
+						});
+						return false;
+					}
+				}
+			})
+			return false;
+		});
+	})
+	if(window !=top){
+		    top.location.href = location.href;
+	}
+</script>
+</body>
+</html>

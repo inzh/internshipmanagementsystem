@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.kinzh.internshipmanagementsystem.admin.dao.RoleDao">
+    <sql id="selectRoleContactVo">
+        select distinct r.role_id,r.role_name,r.data_scope,r.description,r.create_time,r.update_time
+        from my_role r
+	        left join my_role_user ru on ru.role_id = r.role_id
+	        left join my_user u on u.user_id = ru.user_id
+	        left join my_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="getFuzzyRolesByPage" resultType="cn.kinzh.internshipmanagementsystem.admin.entity.MyRole">
+        <include refid="selectRoleContactVo"/>
+        <where>
+            <if test="roleName != null and roleName != ''">
+                 r.role_name like CONCAT('%', #{roleName}, '%')
+            </if>
+            <!-- 数据范围过滤 -->
+            ${params.dataScope}
+        </where>
+    </select>
+
+    <insert id="saveRole" parameterType="cn.kinzh.internshipmanagementsystem.admin.entity.MyRole" flushCache="true" useGeneratedKeys="true" keyProperty="roleId">
+		insert into my_role(role_name, description, create_time, update_time)
+		values
+		(#{roleName}, #{description}, now(), now())
+	</insert>
+
+    <update id="update">
+        update my_role r
+        <set>
+            <if test="roleName != null">
+                `role_name` = #{roleName},
+            </if>
+            <if test="dataScope != null">
+                data_scope = #{dataScope},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            update_time = #{updateTime}
+        </set>
+        where r.role_id = #{roleId}
+    </update>
+
+</mapper>

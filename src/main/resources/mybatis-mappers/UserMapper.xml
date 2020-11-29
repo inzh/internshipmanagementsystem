@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.kinzh.internshipmanagementsystem.admin.dao.UserDao">
+
+    <select id="getFuzzyUserByPage" resultType="cn.kinzh.internshipmanagementsystem.admin.entity.MyUser">
+        SELECT u.user_id,u.dept_id,u.user_name,u.password,u.nick_name,u.phone,u.email,u.avatar_url,u.status,u.create_time,u.update_time
+        FROM my_user u
+        left join my_dept d on u.dept_id = d.dept_id
+        <where>
+            <if test="nickName != null and nickName != ''">
+                AND u.nick_name like CONCAT('%', #{nickName}, '%')
+            </if>
+            <if test="userName != null and userName != ''">
+                AND u.user_name like CONCAT('%', #{userName}, '%')
+            </if>
+            <if test="deptId != null and deptId != ''">
+                AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT e.dept_id FROM my_dept e WHERE FIND_IN_SET(#{deptId},ancestors) ))
+            </if>
+            <!-- 数据范围过滤 -->
+            ${params.dataScope}
+        </where>
+        ORDER BY u.user_id
+    </select>
+
+    <select id="checkPhoneUnique" parameterType="String" resultType="cn.kinzh.internshipmanagementsystem.admin.entity.MyUser">
+		select u.user_id,u.phone from my_user u where u.phone = #{phone} limit 1
+	</select>
+
+    <select id="checkUsernameUnique" parameterType="String" resultType="cn.kinzh.internshipmanagementsystem.admin.entity.MyUser">
+		select u.user_id,u.user_name from my_user u where u.user_name = #{userName} limit 1
+	</select>
+
+    <select id="checkEmailUnique" parameterType="String" resultType="cn.kinzh.internshipmanagementsystem.admin.entity.MyUser">
+		select u.user_id,u.email from my_user u where u.user_name = #{userName} limit 1
+	</select>
+
+    <update id="updateUser">
+        update my_user u
+        <set>
+            <if test="deptId != null">
+                dept_id = #{deptId},
+            </if>
+            <if test="userName != null">
+                user_name = #{userName},
+            </if>
+            <if test="nickName != null">
+                nick_name = #{nickName},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="email != null">
+                email = #{email},
+            </if>
+            <if test="avatarUrl != null">
+                email = #{avatarUrl},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            update_time = #{updateTime}
+        </set>
+        where u.user_id = #{userId}
+    </update>
+</mapper>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.kinzh.internshipmanagementsystem.admin.dao.MyCheckinDao">
+  <resultMap id="BaseResultMap" type="cn.kinzh.internshipmanagementsystem.admin.entity.MyCheckin">
+    <id column="checkin_id" jdbcType="INTEGER" property="checkinId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="count" jdbcType="INTEGER" property="count" />
+    <result column="checkin_time" jdbcType="TIMESTAMP" property="checkinTime" />
+    <result column="checkinlocation" jdbcType="VARCHAR" property="checkinlocation" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    checkin_id, user_id, `count`, checkin_time, checkinlocation
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from my_checkin
+    where checkin_id = #{checkinId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from my_checkin
+    where checkin_id = #{checkinId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="checkin_id" keyProperty="checkinId" parameterType="cn.kinzh.internshipmanagementsystem.admin.entity.MyCheckin" useGeneratedKeys="true">
+    insert into my_checkin (user_id, `count`, checkin_time, 
+      checkinlocation)
+    values (#{userId,jdbcType=INTEGER}, #{count,jdbcType=INTEGER}, #{checkinTime,jdbcType=TIMESTAMP}, 
+      #{checkinlocation,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="checkin_id" keyProperty="checkinId" parameterType="cn.kinzh.internshipmanagementsystem.admin.entity.MyCheckin" useGeneratedKeys="true">
+    insert into my_checkin
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="count != null">
+        `count`,
+      </if>
+      <if test="checkinTime != null">
+        checkin_time,
+      </if>
+      <if test="checkinlocation != null">
+        checkinlocation,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="count != null">
+        #{count,jdbcType=INTEGER},
+      </if>
+      <if test="checkinTime != null">
+        #{checkinTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkinlocation != null">
+        #{checkinlocation,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.kinzh.internshipmanagementsystem.admin.entity.MyCheckin">
+    update my_checkin
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="count != null">
+        `count` = #{count,jdbcType=INTEGER},
+      </if>
+      <if test="checkinTime != null">
+        checkin_time = #{checkinTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkinlocation != null">
+        checkinlocation = #{checkinlocation,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where checkin_id = #{checkinId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.kinzh.internshipmanagementsystem.admin.entity.MyCheckin">
+    update my_checkin
+    set user_id = #{userId,jdbcType=INTEGER},
+      `count` = #{count,jdbcType=INTEGER},
+      checkin_time = #{checkinTime,jdbcType=TIMESTAMP},
+      checkinlocation = #{checkinlocation,jdbcType=VARCHAR}
+    where checkin_id = #{checkinId,jdbcType=INTEGER}
+  </update>
+</mapper>

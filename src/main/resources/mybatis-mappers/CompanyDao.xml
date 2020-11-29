@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.kinzh.internshipmanagementsystem.admin.dao.CompanyDao">
+    <sql id="selectCompanyVo">
+        select j.company_id,j.company_name,j.description,j.sort,j.status,j.create_time,j.update_time
+        from my_company j
+    </sql>
+
+    <select id="getFuzzyCompany" resultType="cn.kinzh.internshipmanagementsystem.admin.entity.MyCompany">
+        <include refid="selectCompanyVo"/>
+        <where>
+            <if test="queryName != null and queryName != ''">
+                AND j.company_name like CONCAT('%', #{queryName}, '%')
+            </if>
+            <if test="queryStatus!= null and queryStatus != ''">
+                AND j.status = #{queryStatus}
+            </if>
+        </where>
+        order by j.sort
+    </select>
+
+
+    <select id="checkCompanyNameUnique" parameterType="String" resultType="cn.kinzh.internshipmanagementsystem.admin.entity.MyCompany">
+        <include refid="selectCompanyVo"/>
+        where j.company_name= #{companyName} limit 1
+    </select>
+
+
+    <delete id="deleteCompanyByIds" parameterType="integer">
+        delete from my_company where company_id in
+        <foreach collection="array" item="companyId" open="(" separator="," close=")">
+            #{companyId}
+        </foreach>
+    </delete>
+
+    <select id="selectCompaniesByUserId" parameterType="integer" resultType="cn.kinzh.internshipmanagementsystem.admin.entity.MyCompany">
+		SELECT j.company_id, j.company_name,j.status
+		FROM my_user u
+			 LEFT JOIN my_user_company uj ON u.user_id = uj.user_id
+			 LEFT JOIN my_company j ON uj.company_id = j.company_id
+		WHERE uj.user_id = #{userId}
+	</select>
+
+    <select id="selectCompanyAll" resultType="cn.kinzh.internshipmanagementsystem.admin.entity.MyCompany">
+        <include refid="selectCompanyVo"/>
+    </select>
+
+    <update id="updateCompany" parameterType="cn.kinzh.internshipmanagementsystem.admin.entity.MyCompany">
+        update my_company
+        <set>
+            <if test="companyName != null and companyName != ''">company_name = #{companyName},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="sort != null and sort != ''">sort = #{sort},</if>
+            update_time = #{updateTime}
+        </set>
+        where company_id = #{companyId}
+    </update>
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.kinzh.internshipmanagementsystem.admin.dao.MenuDao">
+    <select id="getFuzzyMenu" resultType="cn.kinzh.internshipmanagementsystem.admin.entity.MyMenu">
+        select m.menu_id,m.parent_id,m.menu_name,m.icon,m.url,m.permission,m.sort,m.type,m.create_time,m.update_time
+        from my_menu m
+        <where>
+            <if test="queryName != null and queryName != ''">
+                AND m.menu_name like CONCAT('%', #{queryName}, '%')
+            </if>
+            <if test="queryType != null and queryType != ''">
+                AND m.type = #{queryType}
+            </if>
+        </where>
+        order by m.sort
+    </select>
+
+    <update id="update">
+        update my_menu m
+        <set>
+            <if test="parentId != null">
+                parent_id = #{parentId},
+            </if>
+            <if test="menuName != null">
+                `menu_name` = #{menuName},
+            </if>
+            <if test="icon != null">
+                `icon` = #{icon},
+            </if>
+            <if test="url != null">
+                url = #{url},
+            </if>
+            <if test="permission != null">
+                permission = #{permission},
+            </if>
+            <if test="sort != null">
+                sort = #{sort},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            update_time = #{updateTime}
+        </set>
+        where m.menu_id = #{menuId}
+    </update>
+
+    <select id="listByUserId" resultType="cn.kinzh.internshipmanagementsystem.admin.dto.MenuIndexDto">
+        SELECT DISTINCT m.menu_id as id,m.parent_id,m.menu_name as title,m.icon,m.url as href,m.type,m.permission,m.sort
+            FROM my_role_user ru
+        INNER JOIN my_role_menu rm ON rm.role_id = ru.role_id
+        LEFT JOIN my_menu m ON rm.menu_id = m.menu_id
+        <where>
+            <if test="userId != null">
+                ru.user_id = #{userId}
+            </if>
+        </where>
+        ORDER BY ifnull(m.sort,0)
+    </select>
+
+</mapper>
