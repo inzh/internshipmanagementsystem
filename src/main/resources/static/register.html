@@ -82,7 +82,7 @@
 				if (value.length <= 0) {
 					return '验证码不能为空';
 				}
-				if (value.length !== 4) {
+				if (value.length !== 6) {
 					return '请输入正确格式的验证码';
 				}
 			}
@@ -141,32 +141,22 @@
 		}
 
 		form.on('submit(formRegister)', function() {
+			var data = {};
+			data["username"] = $('#username').val();
+			data["password"] = $('#password').val();
+			data["nickname"] = $('#nickname').val();
+			data["phone"] = $('#phone').val();
+			data["email"] = $('#email').val();
+			data["captcha"] = $('#captcha').val();
+
 			$.ajax({
-				url:'/register',
+				url:'/register/register',
 				type:'post',
-				dataType:'text',
-				data:{
-					username:$('#username').val(),
-					password:$('#password').val(),
-					captcha:$('#captcha').val(),
-					rememberme:$('#rememberme').val()
-				},
+				data: JSON.stringify(data),
+				contentType : "application/json;charset=UTF-8",
+				dataType:'json',
 				success:function(result){
-					var restjson = JSON.parse(result)
-					if (restjson.success) {
-						// layui.data("token", {
-						// 	key: "Authorization",
-						// 	value: "Bearer "+ restjson.jwt
-						// });
-						layer.msg(restjson.msg,{icon:1,time:1000},function () {
-							location.href = "/";
-						});
-					}else {
-						layer.msg(restjson.msg,{icon:2,time:1000},function () {
-							$("#captchaImage").attr("src","/captcha" + "?" + Math.random());
-						});
-						return false;
-					}
+
 				}
 			})
 			return false;

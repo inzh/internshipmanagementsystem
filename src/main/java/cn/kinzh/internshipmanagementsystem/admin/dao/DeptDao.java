@@ -31,7 +31,7 @@ public interface DeptDao {
 
     /**
      * 校验部门名称
-     * @param deptName 岗位名称
+     * @param deptName 公司名称
      * @param parentId
      * @return
      */
@@ -40,7 +40,7 @@ public interface DeptDao {
 
     /**
      * 新增部门信息
-     * @param dept 岗位信息
+     * @param dept 公司信息
      * @return 结果
      */
     @Insert("INSERT INTO my_dept(parent_id,ancestors,dept_name,sort,status, create_time, update_time) values(#{parentId},#{ancestors},#{deptName},#{sort},#{status}, now(), now())")

@@ -1,7 +1,11 @@
 package cn.kinzh.internshipmanagementsystem.admin.controller;
 
+import cn.kinzh.internshipmanagementsystem.admin.entity.MyUser;
+import cn.kinzh.internshipmanagementsystem.admin.service.UserService;
+import cn.kinzh.internshipmanagementsystem.common.constants.UserConstants;
 import cn.kinzh.internshipmanagementsystem.common.utils.Md5Util;
 import cn.kinzh.internshipmanagementsystem.common.utils.RedisUtil;
+import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -28,14 +34,14 @@ public class RegisterController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private JavaMailSender javaMailSender;
 
     @Autowired
     private RedisUtil redisUtil;
-
-
 
     @RequestMapping("/sendemail")
     @ResponseBody

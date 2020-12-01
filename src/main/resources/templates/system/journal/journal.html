@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8" content="text/html;charset=utf-8">
+    <meta charset="utf-8">
     <title></title>
     <header th:replace="header::html"></header>
 </head>
@@ -10,19 +10,11 @@
     <div class="layui-card-body">
         <form class="layui-form" action="">
             <div class="layui-form-item">
-                <label class="layui-form-label">岗位名称</label>
+                <label class="layui-form-label">模糊查询</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="name" placeholder="请输入岗位名称" class="layui-input">
+                    <input type="text" name="realName" placeholder="" class="layui-input">
                 </div>
-                <label class="layui-form-label">状态</label>
-                <div class="layui-input-inline">
-                    <select name="status">
-                        <option value=""></option>
-                        <option value="1">正常</option>
-                        <option value="0">禁用</option>
-                    </select>
-                </div>
-                <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="job-query">
+                <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="journal-query">
                     <i class="layui-icon layui-icon-search"></i>
                     查询
                 </button>
@@ -36,11 +28,11 @@
 </div>
 <div class="layui-card">
     <div class="layui-card-body">
-        <table id="job-table" lay-filter="job-table"></table>
+        <table id="journal-table" lay-filter="journal-table"></table>
     </div>
 </div>
 
-<script type="text/html" id="job-toolbar">
+<script type="text/html" id="journal-toolbar">
     <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
         <i class="layui-icon layui-icon-add-1"></i>
         新增
@@ -51,60 +43,54 @@
     </button>
 </script>
 
-<script type="text/html" id="job-bar">
+<script type="text/html" id="journal-bar">
     <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
+    <button class="pear-btn pear-btn-warming pear-btn-sm" lay-event="power"><i class="layui-icon layui-icon-vercode"></i></button>
     <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
 </script>
 
-<script type="text/html" id="job-status">
-    <input type="checkbox"  name="status"  value="{{d.jobId}}" lay-skin="switch" lay-text="启用|禁用" mid="{{d.jobId}}"  lay-filter="job-status" {{ d.status == '1' ? 'checked' : '' }}>
-</script>
-
-
-<script type="text/html" id="job-time">
-    {{layui.util.toDateString(d.createTime, 'yyyy-MM-dd HH:mm:ss')}}
-</script>
 
 <script>
     layui.use(['table','form','jquery'],function () {
         let table = layui.table;
         let form = layui.form;
         let $ = layui.jquery;
+
         let MODULE_PATH = "operate/";
+
         let cols = [
             [
                 {type:'checkbox'},
-                {title: '名称', field: 'jobName', align:'center', width:100},
-                {field: 'sort', title: '排序',align:'center',},
-                {field: 'status', title: '是否可用',templet:'#job-status'},
-                {title: '创建时间', field: 'createTime', align:'center',templet:'#job-time'},
-                {field: 'updateTime', title: '更新时间', align:'center',templet:'#job-time'},
-                {title: '操作', toolbar: '#job-bar', align:'center', width:130}
+                {title: '角色名', field: 'journalName', align:'center', width:100},
+                {title: '描述', field: 'description', align:'center'},
+                {title: '操作', toolbar: '#journal-bar', align:'center', width:195}
             ]
         ]
-
-        var tableIns =table.render({
-            elem: '#job-table',
-            url: '/api/job',
+        var tableIns = table.render({
+            elem: '#journal-table',
+            url: '/api/journal',
             page: true ,
             cols: cols ,
             skin: 'line',
-            toolbar: '#job-toolbar',
+            toolbar: '#journal-toolbar',
             defaultToolbar: [{
                 layEvent: 'refresh',
                 icon: 'layui-icon-refresh',
             }, 'filter', 'print', 'exports']
         });
 
-        table.on('tool(job-table)', function(obj){
+        table.on('tool(journal-table)', function(obj){
             if(obj.event === 'remove'){
                 window.remove(obj);
             } else if(obj.event === 'edit'){
-                window .edit(obj);
+                window.edit(obj);
+            }
+            else if(obj.event === 'power'){
+                window.power(obj);
             }
         });
 
-        table.on('toolbar(job-table)', function(obj){
+        table.on('toolbar(journal-table)', function(obj){
             if(obj.event === 'add'){
                 window.add();
             } else if(obj.event === 'refresh'){
@@ -113,61 +99,35 @@
                 window.batchRemove(obj);
             }
         });
-        form.on('switch(job-status)', function(obj) {
-            layer.confirm(obj.elem.checked ? '确定要启用该岗位吗' : '确定要停用该岗位吗', {icon: 3, title: '提示'}, function (index) {
-                layer.close(index);
-                var status = obj.elem.checked ? 1 : 0;
-                var data ={
-                    jobId: obj.value,
-                    status: status
-                }
-                let loading = layer.load();
-                $.ajax({
-                    url:'/api/job/changeStatus',
-                    data:JSON.stringify(data),
-                    dataType:'json',
-                    contentType:'application/json',
-                    type:'put',
-                    success:function(result){
-                        layer.close(loading);
-                        if(result.success){
-                            layer.msg(result.msg,{icon:1,time:1000},function(){
-                                obj.del();
-                            });
-                        }else{
-                            layer.msg(result.msg,{icon:2,time:1000});
-                        }
-                    }
-                })
-            });
-        });
-        form.on('submit(job-query)', function(data){
+
+        form.on('submit(journal-query)', function(data){
             var formData = data.field;
-            var name = formData.name;
-            var status = formData.status;
+            var realName = formData.realName;
             tableIns.reload({
                 page: {
                     curr: 1 //重新从第 1 页开始
                 }
                 , where: {//这里传参  向后台
-                    queryName: name,
-                    queryStatus: status
+                    queryName: realName,
                     //可传多个参数到后台...  ，分隔
                 }
-                , url: '/api/job'//后台做模糊搜索接口路径
+                , url: '/api/journal'//后台做模糊搜索接口路径
                 , method: 'get'
             });
             return false;
         });
 
+        form.on('switch(journal-status)', function(obj){
+            layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+        });
 
         window.add = function(){
             layer.open({
                 type: 2,
                 title: '新增',
                 shade: 0.1,
-                area: ['500px', '500px'],
-                content:  '/api/job/add'
+                area: ['500px', '600px'],
+                content: '/api/journal/add'
             });
         }
 
@@ -177,18 +137,30 @@
                 type: 2,
                 title: '修改',
                 shade: 0.1,
-                area: ['500px', '500px'],
-                content:  '/api/job/edit/?jobId='+data.jobId
+                area: ['500px', '600px'],
+                content: '/api/journal/edit/?journalId='+data.journalId
+            });
+        }
+        window.power = function(obj){
+            var data = obj.data;
+            layer.open({
+                type: 2,
+                title: '修改',
+                shade: 0.1,
+                area: ['500px', '600px'],
+                content: '/api/journal/edit/dataScope/?journalId='+data.journalId
             });
         }
 
         window.remove = function(obj){
-            layer.confirm('确定要删除该岗位吗？', {icon: 3, title:'提示'}, function(index){
+            var data = obj.data;
+            layer.confirm('确定要删除该角色', {icon: 3, title:'提示'}, function(index){
                 layer.close(index);
                 let loading = layer.load();
                 $.ajax({
-                    url: "/api/job?ids="+obj.data['jobId'],
+                    url: '/api/journal',
                     dataType:'json',
+                    data:{journalId:data.journalId},
                     type:'delete',
                     success:function(result){
                         layer.close(loading);
@@ -212,21 +184,21 @@
             }
             let ids = "";
             for(let i = 0;i<data.length;i++){
-                ids += data[i].jobId+",";
+                ids += data[i].userId+",";
             }
             ids = ids.substr(0,ids.length-1);
-            layer.confirm('确定删除这些岗位吗？', {icon: 3, title:'提示'}, function(index){
+            layer.confirm('确定要删除这些用户', {icon: 3, title:'提示'}, function(index){
                 layer.close(index);
                 let loading = layer.load();
                 $.ajax({
-                    url: "/api/job?ids="+ids,
+                    url: MODULE_PATH+"batchRemove/"+ids,
                     dataType:'json',
                     type:'delete',
                     success:function(result){
                         layer.close(loading);
                         if(result.success){
                             layer.msg(result.msg,{icon:1,time:1000},function(){
-                                table.reload('job-table');
+                                table.reload('user-table');
                             });
                         }else{
                             layer.msg(result.msg,{icon:2,time:1000});
@@ -236,8 +208,8 @@
             });
         }
 
-        window.refresh = function(param){
-            table.reload('job-table');
+        window.refresh = function(){
+            table.reload('journal-table');
         }
     })
 </script>

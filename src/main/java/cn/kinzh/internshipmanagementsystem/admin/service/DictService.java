@@ -22,14 +22,14 @@ public interface DictService {
     /**
      * 校验字典名称
      *
-     * @param myDict 岗位信息
+     * @param myDict 公司信息
      * @return 结果
      */
     String checkDictNameUnique(MyDict myDict);
 
     /**
      * 新增字典信息
-     * @param myDict 岗位信息
+     * @param myDict 公司信息
      * @return 结果
      */
     int insertDict(MyDict myDict);
@@ -44,13 +44,13 @@ public interface DictService {
     /**
      * 修改保存自带你信息
      *
-     * @param myDict 岗位信息
+     * @param myDict 公司信息
      * @return 结果
      */
     int updateDict(MyDict myDict);
 
     /**
-     * 批量删除岗位信息
+     * 批量删除公司信息
      * @param ids 需要删除的数据ID
      * @return 结果
      * @throws MyException 异常

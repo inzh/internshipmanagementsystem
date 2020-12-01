@@ -83,4 +83,5 @@ public interface UserService {
      * @return
      */
     MyUser getUserByName(String userName);
+
 }

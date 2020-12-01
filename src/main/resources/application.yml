@@ -54,7 +54,7 @@ spring:
   mail:
     host: smtp.qq.com
     username: 1457890059@qq.com
-    password:
+    password: qgodstlldwaliehh
     default-encoding: UTF-8
     properties:
       mail:

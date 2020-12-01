@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -25,6 +26,9 @@ import java.util.List;
 @Api(tags = "系统：部门管理")
 public class DeptController {
 
+    @RequestMapping("/ss")
+    public ModelAndView
+
     @Autowired
     private DeptService deptService;
 
@@ -33,6 +37,7 @@ public class DeptController {
     public String index(){
         return "system/dept/dept";
     }
+
 
     @GetMapping
     @ResponseBody
@@ -70,7 +75,7 @@ public class DeptController {
     public Result<MyDept> savePermission(@RequestBody MyDept dept) {
 
         if (UserConstants.DEPT_NAME_NOT_UNIQUE.equals( deptService.checkDeptNameUnique(dept))) {
-            return Result.error().message("新增岗位'" + dept.getDeptName() + "'失败，岗位名称已存在");
+            return Result.error().message("新增公司'" + dept.getDeptName() + "'失败，公司名称已存在");
         }
         int i = deptService.insertDept(dept);
         return Result.judge(i,"添加");
@@ -91,7 +96,7 @@ public class DeptController {
     @MyLog("修改部门")
     public Result updateMenu(@RequestBody MyDept dept) {
         if (UserConstants.DEPT_NAME_NOT_UNIQUE.equals( deptService.checkDeptNameUnique(dept))) {
-            return Result.error().message("更新岗位'" + dept.getDeptName() + "'失败，岗位名称已存在");
+            return Result.error().message("更新公司'" + dept.getDeptName() + "'失败，公司名称已存在");
         } else if (dept.getParentId().equals(dept.getDeptId()))
         {
             return Result.error().message("修改部门'" + dept.getDeptName() + "'失败，上级部门不能是自己");

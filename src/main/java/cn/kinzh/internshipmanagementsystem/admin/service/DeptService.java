@@ -35,7 +35,7 @@ public interface DeptService {
 
     /**
      * 新增部门信息
-     * @param myDept 岗位信息
+     * @param myDept 公司信息
      * @return 结果
      */
     int insertDept(MyDept myDept);

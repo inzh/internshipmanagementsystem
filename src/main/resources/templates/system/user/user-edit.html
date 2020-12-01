@@ -64,10 +64,10 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">岗位</label>
+                    <label class="layui-form-label">公司</label>
                         <div class="layui-input-block">
-                            <select name="jobIds" id="jobIds" lay-filter="jobIds" xm-select="jobIds" xm-select-skin="normal">
-                                <option th:each="job:${jobs}" th:value="${job.jobId}" th:text="${job.jobName}" th:selected="${job.flag}" th:disabled="${job.status == '1'}"></option>
+                            <select name="companyIds" id="companyIds" lay-filter="companyIds" xm-select="companyIds" xm-select-skin="normal">
+                                <option th:each="company:${companys}" th:value="${company.companyId}" th:text="${company.companyName}" th:selected="${company.flag}" th:disabled="${company.status == '1'}"></option>
                             </select>
                         </div>
                 </div>
@@ -117,9 +117,9 @@
         });
 
         form.on('submit(user-save)', function(data){
-            var jobIds = data.field.jobIds;
-            var jobId = jobIds.split(",");
-            data.field.jobIds = jobId
+            var companyIds = data.field.companyIds;
+            var companyId = companyIds.split(",");
+            data.field.companyIds = companyId
             $.ajax({
                 url:'/api/user',
                 data:JSON.stringify(data.field),

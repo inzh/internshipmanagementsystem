@@ -1927,7 +1927,7 @@ window.tinymce.Resource.add("tinymce.plugins.emoticons", {
     category: "people"
   },
   briefcase: {
-    keywords: [ "business", "documents", "work", "law", "legal", "job", "career" ],
+    keywords: [ "business", "documents", "work", "law", "legal", "company", "career" ],
     "char": "\ud83d\udcbc",
     fitzpatrick_scale: false,
     category: "people"

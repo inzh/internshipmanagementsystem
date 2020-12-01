@@ -5,7 +5,7 @@ package cn.kinzh.internshipmanagementsystem.common.constants;
  * @author kennyhao
  */
 public class UserConstants {
-    /** 岗位名称是否唯一的返回结果码 */
+    /** 公司名称是否唯一的返回结果码 */
     public final static String COMPANY_NAME_UNIQUE = "0";
     public final static String COMPANY_NAME_NOT_UNIQUE = "1";
 

@@ -51,13 +51,13 @@ public interface DictDao {
     /**
      * 修改保存字典信息
      *
-     * @param myDict 岗位信息
+     * @param myDict 公司信息
      * @return 结果
      */
     int updateDict(MyDict myDict);
 
     /**
-     * 批量删除岗位信息
+     * 批量删除公司信息
      *
      * @param dictIds 需要删除的数据ID
      * @return 结果

@@ -40,7 +40,7 @@ public interface DictDetailService {
     /**
      * 修改保存字典详情信息
      *
-     * @param myDictDetail 岗位信息
+     * @param myDictDetail 公司信息
      * @return 结果
      */
     int updateDictDetail(MyDictDetail myDictDetail);

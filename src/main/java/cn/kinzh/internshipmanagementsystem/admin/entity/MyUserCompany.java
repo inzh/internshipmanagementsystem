@@ -16,5 +16,4 @@ public class MyUserCompany extends BaseEntity {
 
     private Integer companyId;
 
-    private String jobDescription;
 }

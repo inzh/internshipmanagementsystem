@@ -21,29 +21,29 @@ import org.springframework.web.bind.annotation.*;
  */
 @Controller
 @RequestMapping("/api/company")
-@Api(tags = "系统：岗位管理")
+@Api(tags = "系统：公司管理")
 public class CompanyController {
 
     @Autowired
     private CompanyService companyService;
     @GetMapping("index")
-    @ApiOperation(value = "返回岗位页面")
+    @ApiOperation(value = "返回公司页面")
     public String index(){
         return "system/company/company";
     }
 
     @GetMapping
     @ResponseBody
-    @ApiOperation(value = "岗位列表")
+    @ApiOperation(value = "公司列表")
     @PreAuthorize("hasAnyAuthority('company:list')")
-    @MyLog("查询岗位")
+    @MyLog("查询公司")
     public Result getCompanyAll(PageTableRequest pageTableRequest, CompanyQueryDto companyQueryDto){
         pageTableRequest.countOffset();
         return companyService.getCompanyAll(pageTableRequest.getOffset(),pageTableRequest.getLimit(),companyQueryDto);
     }
 
     @GetMapping("/add")
-    @ApiOperation(value = "添加岗位页面")
+    @ApiOperation(value = "添加公司页面")
     @PreAuthorize("hasAnyAuthority('company:add')")
     public String addCompany(Model model){
         model.addAttribute("MyCompany",new MyCompany());
@@ -52,18 +52,18 @@ public class CompanyController {
 
     @PostMapping
     @ResponseBody
-    @ApiOperation(value = "添加岗位")
+    @ApiOperation(value = "添加公司")
     @PreAuthorize("hasAnyAuthority('company:add')")
-    @MyLog("添加岗位")
+    @MyLog("添加公司")
     public Result saveCompany(@RequestBody MyCompany myCompany){
         if (UserConstants.COMPANY_NAME_NOT_UNIQUE.equals(companyService.checkCompanyNameUnique(myCompany))) {
-            return Result.error().message("新增岗位'" + myCompany.getCompanyName() + "'失败，岗位名称已存在");
+            return Result.error().message("新增公司'" + myCompany.getCompanyName() + "'失败，公司名称已存在");
         }
-        return Result.judge(companyService.insertCompany(myCompany),"添加岗位");
+        return Result.judge(companyService.insertCompany(myCompany),"添加公司");
     }
 
     @GetMapping(value = "/edit")
-    @ApiOperation(value = "修改岗位页面")
+    @ApiOperation(value = "修改公司页面")
     @PreAuthorize("hasAnyAuthority('company:edit')")
     public String editRole(Model model, MyCompany company) {
         model.addAttribute("MyCompany",companyService.getCompanyById(company.getCompanyId()));
@@ -71,22 +71,22 @@ public class CompanyController {
     }
     @PutMapping
     @ResponseBody
-    @ApiOperation(value = "修改岗位")
+    @ApiOperation(value = "修改公司")
     @PreAuthorize("hasAnyAuthority('company:edit')")
-    @MyLog("修改岗位")
+    @MyLog("修改公司")
     public Result updateCompany(@RequestBody MyCompany myCompany){
         if (UserConstants.COMPANY_NAME_NOT_UNIQUE.equals(companyService.checkCompanyNameUnique(myCompany))) {
-            return Result.error().message("修改岗位'" + myCompany.getCompanyName() + "'失败，岗位名称已存在");
+            return Result.error().message("修改公司'" + myCompany.getCompanyName() + "'失败，公司名称已存在");
         }
-        return Result.judge(companyService.updateCompany(myCompany),"修改岗位");
+        return Result.judge(companyService.updateCompany(myCompany),"修改公司");
     }
     /**
      * 用户状态修改
      */
-    @MyLog("修改岗位状态")
+    @MyLog("修改公司状态")
     @PutMapping("/changeStatus")
     @ResponseBody
-    @ApiOperation(value = "修改岗位状态")
+    @ApiOperation(value = "修改公司状态")
     @PreAuthorize("hasAnyAuthority('company:edit')")
     public Result changeStatus(@RequestBody MyCompany myCompany)
     {
@@ -96,7 +96,7 @@ public class CompanyController {
 
     @DeleteMapping
     @ResponseBody
-    @ApiOperation(value = "删除岗位")
+    @ApiOperation(value = "删除公司")
     @PreAuthorize("hasAnyAuthority('company:del')")
     public Result<MyCompany> deleteRole(String ids) {
         try {

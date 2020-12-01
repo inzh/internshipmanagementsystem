@@ -37,7 +37,7 @@ public class MyUser extends BaseEntity{
     }
 
     private Integer roleId;
-    /** 岗位组 */
+    /** 公司组 */
     private Integer[] companyIds;
 
     /**
