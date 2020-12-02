@@ -35,9 +35,9 @@ public interface JournalService {
     int deleteJournalById(Integer id);
 
     /**
-     * 保存实习日志
+     * 保存实习日志到对应用户
      */
-    Result<MyJournal> save();
+    Result<MyJournal> save(MyJournal myJournal);
 
     /**
      * 获取所有日志

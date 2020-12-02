@@ -27,7 +27,7 @@
 					<li class="layui-nav-item layui-hide-xs"><a href="#" class="fullScreen layui-icon layui-icon-screen-full"></a></li>
 					<li class="layui-nav-item layui-hide-xs"><a href="https://gitee.com/witmy/my-springsecurity-plus" class="layui-icon layui-icon-website"></a></li>
 					<li class="layui-nav-item" lay-unselect="">
-						<a href="javascript:;"><img th:src="@{/admin/images/avatar.jpg}" class="layui-nav-img"><span sec:authentication="principal.MyUser.nickName"/></a>
+						<a href="javascript:;"><img th:src="@{/admin/images/avatar.jpg}" class="layui-nav-img"><span class="pageUserName" sec:authentication="principal.MyUser.userName"/></a>
 						<dl class="layui-nav-child">
 							<dd><a href="javascript:;" class="pearson">个人信息</a></dd>
 							<dd><a href="/logout">注销登陆</a></dd>

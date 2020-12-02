@@ -26,11 +26,9 @@ import java.util.List;
 @Api(tags = "系统：部门管理")
 public class DeptController {
 
-    @RequestMapping("/ss")
-    public ModelAndView
-
     @Autowired
     private DeptService deptService;
+
 
     @GetMapping("index")
     @ApiOperation(value = "返回部门页面")

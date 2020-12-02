@@ -37,7 +37,10 @@
 </script>
 
 <script>
-    layui.use('layedit', function(){
+    layui.use(['form', 'element','jquery','popup','layer','layedit'], function(){
+        var form = layui.form;
+        var element = layui.element;
+        var popup = layui.popup;
         var layedit = layui.layedit
             ,$ = layui.jquery;
 
